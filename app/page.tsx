@@ -4,27 +4,22 @@ import { useState } from "react";
 import { PageContainer } from "@/components/layout/page-container";
 import { LeadCard } from "@/components/leads/lead-card";
 import { LeadDetailsDialog } from "@/components/leads/lead-details-dialog";
+import { LeadFilters } from "@/components/leads/lead-filters";
 import { GoalProgress } from "@/components/dashboard/goal-progress";
-
-const mockLeads = [
-  {
-    name: "Jane Reyes",
-    title: "COO",
-    company: "Northwind Traders",
-    description: "Interested in upgrading espresso machines for her in-store coffee shops.",
-    intent: "High buying intent",
-  },
-  {
-    name: "Allan Munger",
-    title: "Head of Real Estate Development",
-    company: "Contoso Coffee",
-    description: "Prepare for high-buying intent meeting regarding upgrading service contract.",
-    intent: "Meeting scheduled",
-  },
-];
+import { useLeads } from "@/hooks/use-leads";
+import type { Lead } from "@/lib/types/lead";
 
 export default function Home() {
-  const [selectedLead, setSelectedLead] = useState<typeof mockLeads[0] | null>(null);
+  const { 
+    leads, 
+    searchTerm, 
+    setSearchTerm, 
+    statusFilter, 
+    setStatusFilter,
+    viewMode,
+    setViewMode
+  } = useLeads();
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
 
   return (
     <PageContainer>
@@ -36,11 +31,25 @@ export default function Home() {
           message="Copilot has pinpointed 20 key leads that show strong purchase intent and are actively engaging. These leads need your focus."
         />
         
-        <div className="grid gap-4 md:grid-cols-2">
-          {mockLeads.map((lead) => (
+        <LeadFilters
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          statusFilter={statusFilter}
+          onStatusChange={setStatusFilter}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+        />
+
+        <div className={`grid gap-4 ${
+          viewMode === 'grid' 
+            ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' 
+            : 'grid-cols-1'
+        }`}>
+          {leads.map((lead) => (
             <LeadCard
-              key={lead.name}
+              key={lead.id}
               {...lead}
+              viewMode={viewMode}
               onClick={() => setSelectedLead(lead)}
             />
           ))}

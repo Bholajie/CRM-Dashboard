@@ -5,10 +5,14 @@ export interface Lead {
   company: string;
   description: string;
   intent: string;
-  value?: string;
+  value: string;
   status: 'new' | 'in-progress' | 'closed';
   createdAt: string;
   isPinned?: boolean;
+  decisionMaker?: boolean;
+  nextMeeting?: string;
+  lastContact?: string;
+  notes?: string;
 }
 
 export interface WorkItem {
